@@ -1,0 +1,7 @@
+# dsh-balance loader layer: this file is applied automatically when the
+# package is added as a profile bundle (declared via `dsh.bundle.patch` in
+# package.json). It registers the plugin under the loader id "balance".
+- insert:
+    - id: balance
+      name: dsh-balance
+      config: {}
