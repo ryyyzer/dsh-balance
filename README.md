@@ -6,6 +6,8 @@ DeepSeek Harness（`dsh web` / macOS 桌面版）的余额与用量插件：侧�
 
 > 已在 `@deepseek-ai/dsh@0.1.2-rc.1`（MIT）上验证。dsh 尚未到 1.0，插件内部接口可能在版本间变化——请固定你运行的引擎版本。
 
+![dsh-balance 预览](./assets/preview.png)
+
 ## 功能
 
 - **余额芯片**（侧边栏底部、左下角）：始终显示**官方**最新余额，数据来自 `api.deepseek.com/user/balance`（使用你日常的 `DEEPSEEK_API_KEY` 鉴权——该接口免费，校准不消耗模型额度）。

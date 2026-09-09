@@ -7,6 +7,8 @@ A balance & usage plugin for [DeepSeek Harness](https://github.com/deepseek-ai/D
 > Tested against `@deepseek-ai/dsh@0.1.2-rc.1` (MIT). dsh is pre-1.0 — its plugin
 > internals may change between releases; pin the engine version you run.
 
+![dsh-balance preview](./assets/preview.png)
+
 ## Features
 
 - **Balance chip** (sidebar footer, bottom-left): always shows the latest **official** balance from `api.deepseek.com/user/balance` (authenticated with your normal `DEEPSEEK_API_KEY` — the endpoint is free, recalibration never spends model credits).
