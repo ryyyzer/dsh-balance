@@ -1,80 +1,68 @@
 # dsh-balance
 
-A balance & usage plugin for [DeepSeek Harness](https://github.com/deepseek-ai/DeepSeek-Harness) (`dsh web` / the macOS desktop wrapper): a balance chip in the sidebar footer, a click popup with today's per-model consumption, and a **余额配置** settings section (platform `userToken` + auto-refresh interval).
+[English](./README.en.md) · **简体中文**
 
-> Tested against `@deepseek-ai/dsh@0.1.2-rc.1` (MIT). dsh is pre-1.0 — its plugin
-> internals may change between releases; pin the engine version you run.
+DeepSeek Harness（`dsh web` / macOS 桌面版）的余额与用量插件：侧边栏底部的余额芯片、点击弹出的「今日分模型消耗」、以及设置里的**「余额配置」**（平台登录 Token + 自动刷新间隔）。
 
-## Features
+> 已在 `@deepseek-ai/dsh@0.1.2-rc.1`（MIT）上验证。dsh 尚未到 1.0，插件内部接口可能在版本间变化——请固定你运行的引擎版本。
 
-- **Balance chip** (sidebar footer, bottom-left): always shows the latest **official** balance from `api.deepseek.com/user/balance` (authenticated with your normal `DEEPSEEK_API_KEY` — the endpoint is free, recalibration never spends model credits).
-- **Click popup**: today's per-model consumption (tokens & ¥), 上次校准 time, 刷新数据, and a 充值 link.
-- **设置 → 余额配置**:
-  - **DeepSeek 开放平台登录 Token** — paste your platform `userToken` to enable today's per-model data (read on the platform web console, see below). Stored only in the local credentials store (`~/.dsh`).
-  - **刷新间隔** — 30 s / 60 s (default) / 120 s / custom (1–86400 s). Controls the chip auto-calibration cadence:
-    - refresh immediately on first page load (always),
-    - refresh every *N* seconds while the page is open,
-    - catch-up refresh when returning to the foreground if the last refresh was ≥ *N* s ago,
-    - 刷新数据 refreshes immediately (always).
-  - The interval is saved **server-side next to the token** in the same `~/.dsh` credentials store, so it survives restarts and port changes.
+## 功能
 
-## Install (for regular dsh web users)
+- **余额芯片**（侧边栏底部、左下角）：始终显示**官方**最新余额，数据来自 `api.deepseek.com/user/balance`（使用你日常的 `DEEPSEEK_API_KEY` 鉴权——该接口免费，校准不消耗模型额度）。
+- **点击弹窗**：今日分模型消耗（tokens 与金额 ¥）、上次校准时间、刷新数据、充值入口。
+- **设置 → 余额配置**：
+  - **DeepSeek 开放平台登录 Token**——粘贴平台 `userToken` 以启用今日分模型数据（获取方法见下文）。仅保存在本机凭据文件（`~/.dsh`）。
+  - **刷新间隔**——30 s / 60 s（默认）/ 120 s / 自定义（1–86400 s），控制芯片自动校准节奏：
+    - 页面首次打开立即刷新（固定）；
+    - 页面存活期间每 *N* 秒刷新一次；
+    - 从后台返回时，若距上次刷新 ≥ *N* 秒则立即补一次；
+    - 点「刷新数据」随时立即刷新（固定）。
+  - 间隔与 Token **一同保存在服务端**（同一个 `~/.dsh` 凭据文件），重启 App、更换端口都会保持。
 
-Requirements: Node.js + `pnpm` on `PATH`, and dsh initialized once.
+## 安装（普通 dsh web 用户）
+
+需要：Node.js + `pnpm` 在 PATH 上，并至少初始化过一次 dsh。
 
 ```bash
-# 1) init ~/.dsh with the pinned engine (only needed the first time)
+# 1) 用固定版本引擎初始化 ~/.dsh（仅首次需要）
 npx @deepseek-ai/dsh@0.1.2-rc.1 web --no-open
-# stop it (Ctrl+C)
+# 停掉它（Ctrl+C）
 
-# 2) install the plugin into the web profile (git-hosted packages are fetched
-#    by pnpm; a one-time commit hash pin is recommended)
-dsh plugin --profile web add github:<your-github-user>/dsh-balance#<commit>
+# 2) 把插件装进 web profile（推荐固定到某个 commit / tag）
+dsh plugin --profile web add github:ryyyzer/dsh-balance#<commit>
 
-# 3) start the GUI again and hard-refresh the page
+# 3) 重新启动 GUI 并刷新页面
 npx @deepseek-ai/dsh@0.1.2-rc.1 web
 ```
 
-The package declares `dsh.bundle.patch`, so the `dsh plugin` command installs it
-as a profile **bundle layer** and it self-registers (no manual `cordis.patch.yml`
-editing). Uninstall: `dsh plugin --profile web remove dsh-balance`.
+包声明了 `dsh.bundle.patch`，因此 `dsh plugin` 命令会把它安装为 profile 的 **bundle 层**并**自动注册**（无需手动改 `cordis.patch.yml`）。卸载：`dsh plugin --profile web remove dsh-balance`。
 
-First run: open 设置 → models and fill in your DeepSeek API key (the chip needs
-it to show a balance). For the today-per-model rows, also configure the platform
-token below.
+首次使用：打开 设置 → 模型，填入你的 DeepSeek API Key（芯片显示余额需要它）。要看到「今日分模型」还需要配置下面的平台 Token。
 
-## Getting the platform userToken (optional, for “today” data)
+## 获取平台 userToken（可选，用于“今日”数据）
 
-1. Log in to `platform.deepseek.com` in a browser.
-2. Open DevTools (F12) → Console and run:
+1. 在浏览器登录 `platform.deepseek.com`。
+2. 按 F12 打开开发者工具 → Console，执行：
 
    ```js
    localStorage.getItem("userToken")
    ```
 
-3. Paste the returned string into 设置 → 余额配置 → DeepSeek 开放平台登录 Token.
+3. 把返回的字符串粘贴到 设置 → 余额配置 → DeepSeek 开放平台登录 Token。
 
-The token is only used to call the platform console's own usage-export endpoint
-from your local machine and is stored in the local credentials store — it is
-never uploaded anywhere by this plugin.
+该 Token 仅用于从你的本机调用平台控制台自己的 usage-export 接口，且只保存在本地凭据文件中——插件不会把它上传到任何地方。
 
-## Privacy & security notes
+## 隐私与安全说明
 
-- API key and `userToken` never leave your machine; both live in `~/.dsh`
-  credentials (the same store dsh itself uses).
-- All `/dsh-balance/*` routes only accept loopback + same-origin requests
-  (DNS-rebinding guard); this is not a substitute for auth against other
-  processes on your own machine.
-- The `userToken` is a **platform session credential**: treat it as sensitive
-  (same as a password). Only paste it into the dsh GUI on a machine you trust.
+- API Key 与 `userToken` 不会离开你的机器，都存放在 `~/.dsh` 凭据里（与 dsh 自身共用同一存储）。
+- 所有 `/dsh-balance/*` 路由只接受回环 + 同源请求（内置 DNS-rebinding 防护）；这不是对同机其他进程的独立认证。
+- `userToken` 是**平台会话凭据**：请像对待密码一样谨慎，只在你信任的机器上的 dsh GUI 里粘贴。
 
-## Caveats / disclaimer
+## 注意事项 / 免责声明
 
-- Today's per-model consumption comes from `platform.deepseek.com/api/v0/usage/export` — a **private, undocumented console endpoint** (zip of CSVs). It may change or break at any time, and calling it may violate platform terms of service. The official balance feature (`/user/balance`) has no such issue.
-- The plugin relies on dsh internal injection points (`connection` / `credentials` / `webServer` host services and client slot modules `@deepseek-ai/dsh-client-ui-sidebar` / `-settings-general`). Engine upgrades may require small compatibility tweaks — pin `0.1.2-rc.1` for now.
+- 「今日分模型消耗」来自 `platform.deepseek.com/api/v0/usage/export`——这是一个**私有的、未文档化的控制台接口**（返回 zip 内含 CSV）。它可能随时变更或失效，调用它也可能违反平台服务条款。官方余额功能（`/user/balance`）没有这个问题。
+- 插件依赖 dsh 内部注入点（宿主端 `connection` / `credentials` / `webServer` 服务，客户端插槽模块 `@deepseek-ai/dsh-client-ui-sidebar` / `-settings-general`）。引擎升级可能需要小幅适配——现阶段请固定 `0.1.2-rc.1`。
 
-## License
+## 许可证
 
-MIT. The data-interface approach (platform usage export + `userToken`) is
-informed by [AzureHalcyon/dsh-deepseek-usage](https://github.com/AzureHalcyon/dsh-deepseek-usage)
-(GPL-2.0); this is an independent implementation.
+MIT。数据接口思路参考了 [AzureHalcyon/dsh-deepseek-usage](https://github.com/AzureHalcyon/dsh-deepseek-usage)（GPL-2.0）；本仓库为独立实现。
