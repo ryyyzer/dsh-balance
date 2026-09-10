@@ -1,6 +1,6 @@
 {
   "name": "dsh-balance",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Balance chip + today's per-model usage popup + 余额配置 settings (platform userToken & auto-refresh interval) for DeepSeek Harness (dsh web / desktop).",
   "type": "module",
   "main": "lib/index.js",
