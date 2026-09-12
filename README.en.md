@@ -30,17 +30,20 @@ A balance & usage plugin for [DeepSeek Harness](https://github.com/deepseek-ai/D
 Requirements: Node.js + `pnpm` on `PATH`, and dsh initialized once.
 
 ```bash
-# 1) init ~/.dsh with the pinned engine (only needed the first time)
-npx @deepseek-ai/dsh@0.1.5-rc.1 web --no-open
-# stop it (Ctrl+C)
+# 1) init ~/.dsh (only the first time; Ctrl+C once you see the URL)
+npx -y @deepseek-ai/dsh@0.1.5-rc.1 web --no-open
 
-# 2) install the plugin into the web profile (pin a release tag / commit;
-#    git-hosted packages are fetched by pnpm)
-dsh plugin --profile web add github:ryyyzer/dsh-balance#v0.1.1
+# 2) install the plugin pinned to a release tag. Without a global dsh install,
+#    run the same subcommand through npx:
+npx -y @deepseek-ai/dsh@0.1.5-rc.1 plugin --profile web add github:ryyyzer/dsh-balance#v0.1.1
+#    (with a global install: dsh plugin --profile web add github:ryyyzer/dsh-balance#v0.1.1)
 
 # 3) start the GUI again and hard-refresh the page
-npx @deepseek-ai/dsh@0.1.5-rc.1 web
+npx -y @deepseek-ai/dsh@0.1.5-rc.1 web
 ```
+
+> Requirements: `pnpm` on `PATH` (`dsh plugin` is a pnpm forwarder) and `git` to
+> fetch the GitHub package (macOS: Xcode Command Line Tools).
 
 The package declares `dsh.bundle.patch`, so the `dsh plugin` command installs it
 as a profile **bundle layer** and it self-registers (no manual `cordis.patch.yml`

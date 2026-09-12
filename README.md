@@ -27,16 +27,19 @@ DeepSeek Harness（`dsh web` / macOS 桌面版）的余额与用量插件：侧�
 需要：Node.js + `pnpm` 在 PATH 上，并至少初始化过一次 dsh。
 
 ```bash
-# 1) 用固定版本引擎初始化 ~/.dsh（仅首次需要）
-npx @deepseek-ai/dsh@0.1.5-rc.1 web --no-open
-# 停掉它（Ctrl+C）
+# 1) 初始化 ~/.dsh（仅首次需要；看到 URL 后 Ctrl+C 停掉）
+npx -y @deepseek-ai/dsh@0.1.5-rc.1 web --no-open
 
-# 2) 把插件装进 web profile（固定到某个 release tag / commit）
-dsh plugin --profile web add github:ryyyzer/dsh-balance#v0.1.1
+# 2) 装插件（固定到 release tag）。没全局装过 dsh 就用 npx 跑同一条子命令：
+npx -y @deepseek-ai/dsh@0.1.5-rc.1 plugin --profile web add github:ryyyzer/dsh-balance#v0.1.1
+#    已全局安装（npm i -g @deepseek-ai/dsh）的话，等价于：
+#    dsh plugin --profile web add github:ryyyzer/dsh-balance#v0.1.1
 
 # 3) 重新启动 GUI 并刷新页面
-npx @deepseek-ai/dsh@0.1.5-rc.1 web
+npx -y @deepseek-ai/dsh@0.1.5-rc.1 web
 ```
+
+> 依赖：`pnpm` 要在 PATH 上（`dsh plugin` 本质是 pnpm 转发器）；从 GitHub 抓包还需要 `git`（macOS 装过 Xcode Command Line Tools 即可）。
 
 包声明了 `dsh.bundle.patch`，因此 `dsh plugin` 命令会把它安装为 profile 的 **bundle 层**并**自动注册**（无需手动改 `cordis.patch.yml`）。卸载：`dsh plugin --profile web remove dsh-balance`。
 
